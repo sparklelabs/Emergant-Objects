@@ -1,6 +1,6 @@
 # TTP223B Capacitive touch sensor
 
-![](/home/arielc/Documents/school/emergentObjectsDir/emergentobjects/parts/cattouch_sensor.jpg)
+![](parts/captouch_sensor/captouch_sensor.jpg)
 
 
 
