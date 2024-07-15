@@ -24,6 +24,9 @@ import adafruit_hcsr04
 # neopixel
 import neopixel 
 pixels = neopixel.NeoPixel(board.GP13, 2)  # This is the pin for your Neopixels and the number of LEDs in the chain.
+# audio
+import pwmio
+speaker = pwmio.PWMOut(board.GP2, duty_cycle=0, frequency=440, variable_frequency=True)
 
 # the display can mess up the i2c and this resets it.
 displayio.release_displays()
@@ -62,6 +65,7 @@ display = adafruit_displayio_ssd1306.SSD1306(display_bus, width=128, height=64)
 splash = displayio.Group()
 display.root_group = splash
 
+# Draw a rectangle
 # color_bitmap = displayio.Bitmap(128, 64, 1)
 # color_palette = displayio.Palette(1)
 # color_palette[0] = 0xFFFFFF  # White
@@ -95,14 +99,14 @@ for x in range(1,6):
 
 while True:
 
-    text_area.text = "SONAR: " + str(sonar.distance)
-    # try:
-    # print(sonar.distance)
-    #     my_distance = sonar.distance
-    # except RuntimeError:
-        # print("ERR")
+    try:
+        text_area.text = "SONAR: " + str(sonar.distance)
+        # print(sonar.distance)
+        # my_distance = sonar.distance
+    except RuntimeError:
+        print("ERR")
     # if my_distance < 9:
-        # print("GET BACK!")
+      # print("GET BACK!")
 
     t = ds3231.datetime
     myTime = "{} {}/{}/{} {}:{:02}:{:02}".format( days[int(t.tm_wday)], t.tm_mon, t.tm_mday, t.tm_year, t.tm_hour, t.tm_min, t.tm_sec )
@@ -128,12 +132,20 @@ while True:
     # check buttons
     if touch1.value:
         pixels[1] = (0,20,60)
+        for i in range(1000,1500,2):
+            speaker.frequency = i
+            speaker.duty_cycle = 65535 // 2  # On 50%
+            time.sleep(0.001)
+        speaker.duty_cycle = 0  # On 50%
     else:
         pixels[1] = (0,0,0)
     if touch2.value:
         pixels[0] = (40,0,20)
+        for i in reversed(range(100,700,2)):
+            speaker.frequency = i
+            speaker.duty_cycle = 65535 // 2  # On 50%
+            time.sleep(0.001)
+        speaker.duty_cycle = 0
     else:
         pixels[0] = (0,0,0)
-        
-
-    time.sleep(pause) 
+      
